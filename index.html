@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dunbar's Number: The Science of Social Connections</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .visualization-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .dunbar-layers {
+            margin: 20px 0;
+        }
+
+        .layer {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .layer:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .layer-5 { background: linear-gradient(90deg, #ff9a9e, #fecfef); }
+        .layer-15 { background: linear-gradient(90deg, #a8edea, #fed6e3); }
+        .layer-50 { background: linear-gradient(90deg, #ffecd2, #fcb69f); }
+        .layer-150 { background: linear-gradient(90deg, #a8c8ec, #c0e8f0); }
+
+        .layer-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .layer-info {
+            flex: 1;
+        }
+
+        .layer-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .layer-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .network-viz {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(circle, #f0f4f8 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .person {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .person:hover {
+            transform: scale(1.5);
+            background: #ff6b6b;
+        }
+
+        .person.center {
+            width: 16px;
+            height: 16px;
+            background: #ff6b6b;
+            z-index: 10;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: rgba(102, 126, 234, 0.3);
+            transform-origin: left center;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .explanation {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dunbar's Number</h1>
+            <p>The cognitive limit to meaningful social relationships</p>
+        </div>
+
+        <div class="main-content">
+            <div class="info-panel">
+                <h2>What is Dunbar's Number?</h2>
+                <p style="margin-bottom: 20px;">
+                    Dunbar's Number suggests that humans can maintain stable social relationships with approximately <strong>150 people</strong>. This cognitive limit was proposed by British anthropologist Robin Dunbar in the 1990s.
+                </p>
+                
+                <div class="dunbar-layers">
+                    <div class="layer layer-5" onclick="highlightLayer(5)">
+                        <div class="layer-circle">5</div>
+                        <div class="layer-info">
+                            <div class="layer-title">Intimate Bonds</div>
+                            <div class="layer-description">Closest family and friends</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layer layer-15" onclick="highlightLayer(15)">
+                        <div class="layer-circle">15</div>
+                        <div class="layer-info">
+                            <div class="layer-title">Close Friends</div>
+                            <div class="layer-description">People you turn to for support</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layer layer-50" onclick="highlightLayer(50)">
+                        <div class="layer-circle">50</div>
+                        <div class="layer-info">
+                            <div class="layer-title">Meaningful Connections</div>
+                            <div class="layer-description">Regular social contact</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layer layer-150" onclick="highlightLayer(150)">
+                        <div class="layer-circle">150</div>
+                        <div class="layer-info">
+                            <div class="layer-title">Stable Relationships</div>
+                            <div class="layer-description">People you know personally</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-panel">
+                <h2>Network Visualization</h2>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number" id="connectionCount">0</div>
+                        <div class="stat-label">Connections</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="currentLayer">All</div>
+                        <div class="stat-label">Layer</div>
+                    </div>
+                </div>
+                
+                <div class="network-viz" id="networkViz"></div>
+                
+                <div class="controls">
+                    <button class="btn" onclick="generateNetwork()">Generate Network</button>
+                    <button class="btn" onclick="showAllLayers()">Show All Layers</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation">
+            <h2>The Science Behind Dunbar's Number</h2>
+            <p style="margin-bottom: 15px;">
+                Robin Dunbar discovered this limit by studying the relationship between brain size and social group size in primates. The neocortex ratio (the part of the brain responsible for conscious thought and language) strongly correlates with the maximum group size that a species can maintain.
+            </p>
+            <p style="margin-bottom: 15px;">
+                For humans, this translates to approximately 150 stable relationships. This number appears consistently across human societies throughout history - from Neolithic villages to military units to modern social networks.
+            </p>
+            <p style="margin-bottom: 15px;">
+                The layered structure (5, 15, 50, 150) reflects the cognitive effort required to maintain relationships at different levels of intimacy. Each layer requires increasingly more mental resources to track and maintain.
+            </p>
+            <p>
+                In the digital age, while we might have thousands of social media connections, research suggests we still can only meaningfully engage with around 150 people, supporting Dunbar's original hypothesis.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let currentNetwork = [];
+        let currentHighlight = null;
+
+        function generateNetwork() {
+            const viz = document.getElementById('networkViz');
+            viz.innerHTML = '';
+            currentNetwork = [];
+
+            const centerX = viz.offsetWidth / 2;
+            const centerY = viz.offsetHeight / 2;
+
+            // Create center person (you)
+            const centerPerson = createPerson(centerX, centerY, 'center');
+            viz.appendChild(centerPerson);
+
+            // Generate people in layers
+            const layers = [
+                { count: 5, radius: 60, color: '#ff6b6b' },
+                { count: 10, radius: 120, color: '#4ecdc4' },
+                { count: 35, radius: 180, color: '#45b7d1' },
+                { count: 100, radius: 240, color: '#96ceb4' }
+            ];
+
+            layers.forEach((layer, layerIndex) => {
+                for (let i = 0; i < layer.count; i++) {
+                    const angle = (2 * Math.PI * i) / layer.count + Math.random() * 0.5;
+                    const radiusVariation = layer.radius + (Math.random() - 0.5) * 40;
+                    const x = centerX + Math.cos(angle) * radiusVariation;
+                    const y = centerY + Math.sin(angle) * radiusVariation;
+
+                    if (x > 0 && x < viz.offsetWidth && y > 0 && y < viz.offsetHeight) {
+                        const person = createPerson(x, y, `layer-${layerIndex}`, layer.color);
+                        viz.appendChild(person);
+                        currentNetwork.push({ element: person, layer: layerIndex, x, y });
+
+                        // Create connection line
+                        if (Math.random() > 0.3) {
+                            const connection = createConnection(centerX, centerY, x, y);
+                            viz.appendChild(connection);
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('connectionCount').textContent = currentNetwork.length;
+        }
+
+        function createPerson(x, y, className, color = '#667eea') {
+            const person = document.createElement('div');
+            person.className = `person ${className}`;
+            person.style.left = x + 'px';
+            person.style.top = y + 'px';
+            person.style.background = color;
+            
+            person.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.5)';
+                this.style.zIndex = '20';
+            });
+            
+            person.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.zIndex = '1';
+            });
+
+            return person;
+        }
+
+        function createConnection(x1, y1, x2, y2) {
+            const connection = document.createElement('div');
+            connection.className = 'connection';
+            
+            const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            connection.style.left = x1 + 'px';
+            connection.style.top = y1 + 'px';
+            connection.style.width = length + 'px';
+            connection.style.transform = `rotate(${angle}deg)`;
+            
+            return connection;
+        }
+
+        function highlightLayer(layerSize) {
+            currentHighlight = layerSize;
+            const layerMap = { 5: 0, 15: 1, 50: 2, 150: 3 };
+            const targetLayer = layerMap[layerSize];
+
+            document.getElementById('currentLayer').textContent = layerSize;
+
+            currentNetwork.forEach(person => {
+                if (person.layer <= targetLayer) {
+                    person.element.style.opacity = '1';
+                    person.element.style.transform = 'scale(1)';
+                } else {
+                    person.element.style.opacity = '0.2';
+                    person.element.style.transform = 'scale(0.5)';
+                }
+            });
+
+            // Update connection count
+            const visibleConnections = currentNetwork.filter(p => p.layer <= targetLayer).length;
+            document.getElementById('connectionCount').textContent = visibleConnections;
+        }
+
+        function showAllLayers() {
+            currentHighlight = null;
+            document.getElementById('currentLayer').textContent = 'All';
+            document.getElementById('connectionCount').textContent = currentNetwork.length;
+
+            currentNetwork.forEach(person => {
+                person.element.style.opacity = '1';
+                person.element.style.transform = 'scale(1)';
+            });
+        }
+
+        // Initialize with a network
+        window.addEventListener('load', generateNetwork);
+    </script>
+</body>
+</html>
